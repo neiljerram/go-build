@@ -35,7 +35,7 @@ RUN echo 'Host *' >> /etc/ssh/ssh_config \
   && echo '    StrictHostKeyChecking no' >> /etc/ssh/ssh_config
 
 # Disable cgo so that binaries we build will be fully static.
-ENV CGO_ENABLED=0
+# ENV CGO_ENABLED=0
 
 # Recompile the standard library with cgo disabled.  This prevents the standard library from being
 # marked stale, causing full rebuilds every time.
@@ -88,6 +88,10 @@ RUN chmod -R 777 $GOPATH
 RUN curl -sSL https://github.com/estesp/manifest-tool/releases/download/${MANIFEST_TOOL_VERSION}/manifest-tool-linux-amd64 > manifest-tool && \
     chmod +x manifest-tool && \
     mv manifest-tool /usr/bin/
+
+RUN apk add --no-cache gcc
+RUN apk add --no-cache libc-dev
+RUN apk add --no-cache libpcap-dev
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
